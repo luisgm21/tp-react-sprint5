@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 const Navbar = ({ links }) => {
     return (
@@ -7,9 +7,14 @@ const Navbar = ({ links }) => {
                 <ul className="flex space-x-4">
                     {links.map((link, index) => (
                         <li key={index}>
-                            <Link to={link.href} className="text-white hover:text-gray-300">
+                            <NavLink
+                                to={link.href}
+                                className={({ isActive }) =>
+                                    `text-white hover:text-gray-300${isActive ? ' font-bold underline' : ''}`
+                                }
+                            >
                                 {link.label}
-                            </Link>
+                            </NavLink>
                         </li>
                     ))}
                 </ul>
