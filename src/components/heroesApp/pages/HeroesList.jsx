@@ -3,11 +3,13 @@ import { Link } from "react-router-dom"
 import Heroe from "../components/Heroe"
 import axios from "axios"
 
+const API_URL = "https://69f3887cbd2396bf53102806.mockapi.io/api/v1/Heroe"
+
 const HeroesList = () => {
   const [heroes, setHeroes] = useState([])
 
   useEffect(() => {
-    axios.get("https://69f3887cbd2396bf53102806.mockapi.io/api/v1/Heroe")
+    axios.get(API_URL)
       .then((response) => {
         setHeroes(response.data)
       })
@@ -15,6 +17,15 @@ const HeroesList = () => {
         console.error("Error fetching heroes:", error)
       })
   }, [])
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`)
+      setHeroes((prev) => prev.filter((hero) => hero.id !== id))
+    } catch (error) {
+      console.error("Error deleting hero:", error)
+    }
+  }
   
   return (
     <div className="min-h-screen bg-gray-900 p-6">
@@ -36,7 +47,7 @@ const HeroesList = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {heroes.map((hero) => (
-            <Heroe key={hero.id} hero={hero} />
+            <Heroe key={hero.id} hero={hero} onDelete={handleDelete} />
           ))}
         </div>
       </div>

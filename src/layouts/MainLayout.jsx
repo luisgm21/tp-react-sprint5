@@ -9,7 +9,7 @@ const MainLayout = () => {
         <Navbar links={[
             { label: 'Home', href: '/' },
             { label: 'About', href: '/about' },
-            { label: 'Contact', href: '/contact' },
+            { label: 'Heroes', href: '/heroes' },
         ]} />
         <main className="container mx-auto p-4">
             <Outlet />
