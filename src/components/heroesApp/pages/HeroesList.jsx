@@ -7,7 +7,6 @@ import Heroe from "../components/Heroe"
 import axios from "axios"
 
 const API_URL = API_CONFIG.API_URL
-console.log("API_URL:", API_URL) // Agrega este log para verificar el valor de API_URL
 
 const HeroesList = () => {
   const [heroes, setHeroes] = useState([])
