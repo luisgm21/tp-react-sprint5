@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+
+import { API_CONFIG } from "../../../config/env"
 import Heroe from "../components/Heroe"
+
 import axios from "axios"
 
-const API_URL = "https://69f3887cbd2396bf53102806.mockapi.io/api/v1/Heroe"
+const API_URL = API_CONFIG.API_URL
 
 const HeroesList = () => {
   const [heroes, setHeroes] = useState([])

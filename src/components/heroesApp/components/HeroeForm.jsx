@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import axios from "axios"
+import { API_CONFIG } from "../../../config/env"
 
-const API_URL = "https://69f3887cbd2396bf53102806.mockapi.io/api/v1/Heroe"
+const API_URL = API_CONFIG.API_URL
 
 const initialForm = {
   name: "",
