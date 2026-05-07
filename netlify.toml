@@ -1,0 +1,28 @@
+# Netlify Configuration File
+
+# Build configuration
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Single Page App rewrite rule for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Production environment variables
+[context.production.environment]
+  # VITE_API_URL = "TU_API_KEY_AQUI" ← Agregarlo SOLO en Netlify Dashboard
+
+# Deploy preview (staging) environment
+[context.deploy-preview.environment]
+  VITE_NODE_ENV = "staging"
+
+# Branch deploy configuration (optional)
+[context.branch-deploy]
+  command = "npm run build"
+
+# Settings
+[settings]
+  node_bundler = "esbuild"
