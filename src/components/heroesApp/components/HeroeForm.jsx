@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import axios from "axios"
 import { API_CONFIG } from "../../../config/env"
+import { heroeFormSchema } from "../../../config/heroeSchema"
 
 const API_URL = API_CONFIG.API_URL
 
@@ -18,6 +19,7 @@ const HeroeForm = () => {
   const isEditing = Boolean(id)
 
   const [form, setForm] = useState(initialForm)
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(isEditing)
 
@@ -45,10 +47,39 @@ const HeroeForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
+    // Limpiar el error del campo cuando el usuario escribe
+    if (errors[name]) {
+      setErrors((prev) => {
+        const next = { ...prev }
+        delete next[name]
+        return next
+      })
+    }
+  }
+
+  const validateForm = () => {
+    const result = heroeFormSchema.safeParse(form)
+    if (!result.success) {
+      const fieldErrors = {}
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0]
+        // Solo mostrar el primer error por campo
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message
+        }
+      })
+      setErrors(fieldErrors)
+      return false
+    }
+    setErrors({})
+    return true
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (!validateForm()) return
+
     setLoading(true)
 
     const enemies = form.enemiesText
@@ -86,6 +117,13 @@ const HeroeForm = () => {
     )
   }
 
+  const inputClasses = (field) =>
+    `w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg border outline-none transition placeholder-gray-400 ${
+      errors[field]
+        ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/40"
+        : "border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40"
+    }`
+
   return (
     <div className="min-h-screen bg-gray-900 py-12 px-4">
       <div className="max-w-lg mx-auto">
@@ -96,6 +134,7 @@ const HeroeForm = () => {
         <form
           onSubmit={handleSubmit}
           className="bg-gray-800 rounded-xl shadow-lg p-8 space-y-6"
+          noValidate
         >
           {/* Nombre */}
           <div>
@@ -107,10 +146,12 @@ const HeroeForm = () => {
               name="name"
               value={form.name}
               onChange={handleChange}
-              required
               placeholder="Ej: Spider-Man"
-              className="w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 outline-none transition placeholder-gray-400"
+              className={inputClasses("name")}
             />
+            {errors.name && (
+              <p className="text-red-400 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           {/* Avatar */}
@@ -123,11 +164,13 @@ const HeroeForm = () => {
               name="avatar"
               value={form.avatar}
               onChange={handleChange}
-              required
               placeholder="https://ejemplo.com/avatar.jpg"
-              className="w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 outline-none transition placeholder-gray-400"
+              className={inputClasses("avatar")}
             />
-            {form.avatar && (
+            {errors.avatar && (
+              <p className="text-red-400 text-xs mt-1">{errors.avatar}</p>
+            )}
+            {form.avatar && !errors.avatar && (
               <img
                 src={form.avatar}
                 alt="Preview"
@@ -148,11 +191,14 @@ const HeroeForm = () => {
               name="sex"
               value={form.sex}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 outline-none transition"
+              className={inputClasses("sex")}
             >
               <option value="male">Masculino</option>
               <option value="female">Femenino</option>
             </select>
+            {errors.sex && (
+              <p className="text-red-400 text-xs mt-1">{errors.sex}</p>
+            )}
           </div>
 
           {/* Enemigos */}
@@ -166,8 +212,11 @@ const HeroeForm = () => {
               value={form.enemiesText}
               onChange={handleChange}
               placeholder="Green Goblin, Doctor Octopus, Venom"
-              className="w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 outline-none transition placeholder-gray-400"
+              className={inputClasses("enemiesText")}
             />
+            {errors.enemiesText && (
+              <p className="text-red-400 text-xs mt-1">{errors.enemiesText}</p>
+            )}
             <p className="text-gray-500 text-xs mt-1">
               Separados por coma (,)
             </p>
